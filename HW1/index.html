@@ -1,0 +1,113 @@
+<html>
+
+<title>Yu Zhang's HW1</title>
+
+<head>
+    <h1>Yu Zhang's HW1</h1>
+</head>
+<HR color=#987cb9 SIZE=2>
+
+<body>
+    <p id="p1">
+    <h2>Problem 1</h2>
+    <p>
+        <span>(A) <b>Marks</b>: counties </span><br />
+        <span>&nbsp;&nbsp;&nbsp;&nbsp; <b>Channels</b>: area and color hue of counties </span><br />
+    </p>
+    <p>
+        <span>(B) <b>Marks</b>: Blue Rectangles </span><br />
+        <span>&nbsp;&nbsp;&nbsp;&nbsp; <b>Channels</b>: the vertical aligned length and horizontal aligned position of
+            rectangles </span><br />
+    </p>
+    <p>
+        <span>(C) <b>Marks</b>: Dots </span><br />
+        <span>&nbsp;&nbsp;&nbsp;&nbsp; <b>Channels</b>: the vertical aligned position, horizontal aligned position and
+            color luminosity of dots </span><br />
+    </p>
+
+    </p>
+    <br />
+    <HR color=#987cb9 SIZE=2>
+    <p id="p2">
+
+    <h2>Problem 2</h2>
+    <span> According to <a
+            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#more_objects_in_the_standard_library">MDN
+            web docs</a>, the official types in Javascript consist of <b>primitive values</b> and <b>objects</b>.
+    </span><br />
+    <span> <b>Primitive values</b> are Boolean, Null, Undefined, Number, String, Symbol, and BigInt. </span><br />
+    <span> <b>Object</b> in JavaScript is a mapping between keys and values. Typical objects are
+        Array, Function, Class, Maps, Sets, WeakMaps, and WeakSets.</span><br />
+    <br />
+    <span>(a) number <b style="color:red">is</b> a canonical JavaScript type.</span><br />
+    <span>(b) int<b style="color:blue"> is not</b> a canonical JavaScript type.</span><br />
+    <span>(c) unicode<b style="color:blue"> is not</b> a canonical JavaScript type.</span><br />
+    <span>(d) array<b style="color:blue"> is not</b> a canonical JavaScript type.</span><br />
+    <span>(e) char<b style="color:blue"> is not</b> a canonical JavaScript type.</span><br />
+    <span>(f) class<b style="color:blue"> is not</b> a canonical JavaScript type but <b>a special Object</b>. If you use
+        typeof() to check the type of class, you will get <b>object</b> as the result </span><br />
+    <span>(g) regexp<b style="color:blue"> is not</b> a canonical JavaScript type.</span><br />
+    <span>(h) string <b style="color:red">is</b> a canonical JavaScript type.</span><br />
+    <span>(i) boolean <b style="color:red">is</b> a canonical JavaScript type.</span><br />
+    <span>(j) object <b style="color:red">is</b> a canonical JavaScript type.</span><br />
+    <span>(k) null <b style="color:red">is</b> a canonical JavaScript type. If you use typeof() to check the type of
+        null, you will not get <b>Null</b> but <b>object</b> as the result which is unusual for the type.</span><br />
+    <span>(l) function<b style="color:blue"> is not</b> a canonical JavaScript type but a special Object. If you use
+        typeof() to check the type of function, you will not get <b>object</b> but <b>function</b> as the result which
+        is unusual for the type.</span><br />
+
+    <script>
+        console.log("-------- Problem 2 --------")
+        console.log(typeof (1));
+        console.log(typeof ("cat"));
+        console.log(typeof (true));
+        console.log(typeof (new Object()));
+        console.log(typeof (null));
+        console.log(typeof (console.log));
+    </script>
+
+    </p>
+    <br />
+    <HR color=#987cb9 SIZE=2>
+
+    <p id="p3">
+    <h2>Problem 3</h2>
+    <p> Type coercion means that when two different types of values are calculated together, one type will be
+        automatically and forcibly converted to the other type so that the operation can be performed reasonably. </p>
+
+    <span> <b>Example 1</b>: "1" + 20, result is "120".</span><br />
+    <span>
+        In this example, a string and a number are added which is not allowed to be computed in other languages like
+        Python because string can only concatenate to string.</span><br />
+    <span>
+        To rationalize this operation, the number 20 is forcibly converted to the string type, "20", and then contact
+        with the former string "1" to get the result "120".
+    </span><br />
+    <br />
+    <span> <b>Example 2</b>: [1, 2, 0] + 20, result is "1, 2, 020".</span><br />
+    <span> In this example, an array and a number are added which is not allowed to be computed in other languages like
+        Python because list can only concatenate to list. </span><br />
+    <span>To rationalize this operation, the array and the number are forcibly converted to the string type, and then
+        they are concatenated to get the result "1, 2, 020". </span><br />
+    <script>
+        console.log("-------- Problem 3 --------")
+        console.log("1" + 20);
+        console.log(typeof ("1" + 20));
+        console.log([1, 2, 0] + 20);
+        console.log(typeof ([1, 2, 0] + "20"));
+    </script>
+    </p>
+    <br />
+
+    <HR color=#987cb9 SIZE=2>
+    <p id="p4">
+    <h2>Problem 4</h2>
+    <span> Any late or unreadable work will receive <b style="color: red">0 scores!!!</b></span><br />
+    <span> Fortunately, <b>5 </b>slips days in total can be used as the deadline extensions and <b>2</b> lowest scores
+        (including 0) will be dropped for the final grades. So I still have a chance to remedy my mistake! I hope there
+        won't be any mistakes.</span><br />
+    </p>
+
+</body>
+
+</html>
