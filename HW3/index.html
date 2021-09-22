@@ -1,21 +1,19 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Yu Zhang's HW3</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-    <h1 > INFO5100 HW2</h1>
+    <h1 > INFO5100 HW3</h1>
     <h3 style="color:blue"> Yu Zhang  yz2729 </h3>
     <HR color=#987cb9 SIZE=2>
 
     <p id="p1">
         <span style="font-weight:bold; font-size:20px"> Problem 1: </span><br/>
-        <svg id="svg1" width="300" height="300" > </svg>
-        <br/>  
-
         <script> 
             // select the svg element, I give the svg a border to make the center effect of text more clear
-            let svg1 = d3.select("#svg1").style("border", "1px solid black")
+            let svg1 = d3.select("#p1").append("svg").attr("width", "300").attr("height", "300").style("border", "1px solid black")
 
             // append the text element
             svg1.append("text").text("INFO3300").attr("x", 150).attr("y", 150).attr("text-anchor", 
@@ -36,7 +34,6 @@
     <p id="p2">
         <span style="font-weight:bold; font-size:20px"> Problem 2: </span><br/>
         <br/>
-        <svg id="svg2" width="360" height="360" > </svg>
 
         <script> 
             // the point data
@@ -51,7 +48,7 @@
                     {"x":9.0 ,"y":3.6}]
 
             // select the svg element and give it a 1 px light gray border
-            let svg2 = d3.select("#svg2").style("border", "1px solid lightgray")
+            let svg2 = d3.select("#p2").append("svg").attr("width", "360").attr("height", "360").style("border", "1px solid lightgray")
 
             // append the main plot region
             svg2.append("rect").attr("x", "20").attr("y", "20").attr("width", "320").attr("height", "320").style("fill", "white").style("stroke-width", "1").style("stroke", "gray")
@@ -102,14 +99,17 @@
 
     <div id="p3">
         <span style="font-weight:bold; font-size:20px"> Problem 3: </span><br/>
-        <span style="font-size: 15"> (I have the red-green color blindness and try to answer questions as I actually see them)</span>
+        <span style="font-size: 15"> (I have the red-green color blindness and try to answer questions with help of my friend.)</span>
         <br/>
 
         <ul>
-            <li> Sequential. I think this is not an effective color scale as The color distinction in the middle part is not very clear.</li>
-            <li> I think this is an effective color scale. This is because there is a big difference among the colors of the points near -1, 1 and 0.</li>
+            <li> A: Sequential. I think this is  an effective color scale as it has limited color hue which is very easy to distinguish.</li>
+
+            <li> B: I think this is an not effective color scale. Firstly, as the data is numerical and range from -1 to 1, the proper color scale should divergent but this color scale is sequential. Moreover, the color of negative numbers and positive numbers which are close to 0 is hard to distinguish in this scale.</li> 
+
+            <li> C: After uploaded the picture file in ZIP to <a href="http://www.color-blindness.com/coblis-color-blindness-simulator/">Coblis</a>, I find that two kinds of color blindness will cause a loss of perceivable hue variation. One is <b> Blue-Bind/Tritanopia</b> which will make the picture have only blue color. The another one is <b> Monochromacy/Achromatopsia</b> which will make the picture have only gray color.</li>
             
-            <li> I will recommand as there are only limited hues in this rainbow scale which make it easy to differentiate counties and the map doesn't become too dazzling。</li>
+            <li> D: I will not recommand as the color distribution of this rainbow color scale is uneven. The green color takes up most of the area, while the darker part on the left transitions quickly and is not clearly distinguishable. So, I believe that this color distribution is not proper for the numerical data. What's more, I think the color slected by this rainbow color scale may not present a very good visual effect when they are printed on the map. </li>
             
         </ul>
     </div>
