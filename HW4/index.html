@@ -12,6 +12,7 @@
 
     <p id="p1">
         <span style="font-weight:bold; font-size:20px"> Problem 1: </span><br/>
+        <p> The graph in 1E shows that if a diamond has a higher quality, then its price per carat may be higher as the highest price per carat shown in the grap are in a downward trend from left to right.</p>
         <script> 
             width = 400;
             height = 400;
@@ -27,24 +28,45 @@
                const yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.price)]).range([height, margins.top]);
                // Draw the circles
                data.forEach((d,i) =>{
-                chartArea.append("circle").attr('cx', Math.floor(xScale(d['carat']))).attr('cy',  Math.floor(yScale( d['price']))).attr('r',"3px").attr('fill','darkblue').attr('opacity', 0.4).attr('index', i)
+                chartArea.append("circle")
+                         .attr('cx', Math.floor(xScale(d['carat'])))
+                         .attr('cy',  Math.floor(yScale( d['price'])))
+                         .attr('r',"3px").attr('fill','darkblue')
+                         .attr('opacity', 0.4)
+                         .attr('index', i)
                })  
                // Draw the x grid lines
                const xMax = d3.max(data, d => d.carat).toFixed();
                const xAxisScale = d3.scaleLinear().domain([0, xMax]).range([0, chartWidth]);
                for( let i = 0; i < xMax; i++){
-                chartArea.append("line").attr("x1", xAxisScale(i)).attr("y1", margins.top ).attr("x2", xAxisScale(i)).attr("y2", height).attr("stroke", "gray").attr("stroke-width", 1);
+                chartArea.append("line").attr("x1", xAxisScale(i))
+                                        .attr("y1", margins.top )
+                                        .attr("x2", xAxisScale(i))
+                                        .attr("y2", height)
+                                        .attr("stroke", "gray")
+                                        .attr("stroke-width", 1)
+                                        .attr('index', i);
                }
                // Daw the y grid lines
-               const yMax = Math.round(d3.max(data, d => d.price)/1000 ) * 1000;
+               const yMax = Math.round(d3.max(data, d => d.price) / 1000 ) * 1000;
                //console.log(yMax)
                const yAxisScale = d3.scaleLinear().domain([0, yMax]).range([height, margins.top]);
-               for(let i = 0; i < yMax; i+=1000){
-                   chartArea.append("line").attr("x1", 0).attr("y1", yAxisScale(i)).attr("x2", chartWidth).attr("y2", yAxisScale(i)).attr("stroke", "gray").attr("stroke-width", 1);
+               for(let i = 0; i < yMax; i += 1000){
+                   chartArea.append("line").attr("x1", 0)
+                                           .attr("y1", yAxisScale(i))
+                                           .attr("x2", chartWidth)
+                                           .attr("y2", yAxisScale(i))
+                                           .attr("stroke", "gray")
+                                           .attr("stroke-width", 1)
+                                           .attr('index', i);
                }
             }, (err) => {console.log(err);})
 
-            let svg2 = d3.select("#p1").append("svg").attr("width",width).attr("height",height).attr("id","svg2").style("padding", "0 50px 0 50px");
+            let svg2 = d3.select("#p1").append("svg")
+                                       .attr("width",width)
+                                       .attr("height",height)
+                                       .attr("id","svg2")
+                                       .style("padding", "0 50px 0 50px");
             let chartArea2 =  svg2.append("g");
             d3.json("./diamonds.json").then(
                 (data) => {
@@ -53,24 +75,43 @@
                     const yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.price)]).range([height, margins.top]);
                     // Draw the circles
                     data.forEach((d,i) =>{
-                        chartArea2.append("circle").attr('cx', Math.floor(xScale(d['color_rating']) + Math.random() * 10 - 5) ).attr('cy', Math.floor(yScale(d['price']) + Math.random() * 10 - 5) ).attr('r',"3px").attr('fill','darkgreen').attr('opacity', 0.3).attr('index', i)
+                        chartArea2.append("circle")
+                                    .attr('cx', Math.floor(xScale(d['color_rating']) + Math.random() * 10 - 5))
+                                    .attr('cy', Math.floor(yScale(d['price']) + Math.random() * 10 - 5))
+                                    .attr('r',"3px")
+                                    .attr('fill','darkgreen')
+                                    .attr('opacity', 0.3)
+                                    .attr('index', i);
                     })  
                     // Draw the x grid lines
                     const xAxisScale = d3.scaleLinear().domain([0, 8]).range([0, chartWidth]);
                     for( let i = 0; i < 8; i++){
-                        chartArea2.append("line").attr("x1", xAxisScale(i)).attr("y1", margins.top ).attr("x2", xAxisScale(i)).attr("y2", height).attr("stroke", "gray").attr("stroke-width", 1);
+                        chartArea2.append("line").attr("x1", xAxisScale(i))
+                                                 .attr("y1", margins.top )
+                                                 .attr("x2", xAxisScale(i))
+                                                 .attr("y2", height)
+                                                 .attr("stroke", "gray")
+                                                 .attr("stroke-width", 1);
                     }
                     // Daw the y grid lines
                     const yMax = Math.round(d3.max(data, d => d.price)/1000 ) * 1000;
                     //console.log(yMax)
                     const yAxisScale = d3.scaleLinear().domain([0, yMax]).range([height, margins.top]);
                     for(let i = 0; i < yMax; i+=1000){
-                        chartArea2.append("line").attr("x1", 0).attr("y1", yAxisScale(i)).attr("x2", chartWidth).attr("y2", yAxisScale(i)).attr("stroke", "gray").attr("stroke-width", 1);
+                        chartArea2.append("line").attr("x1", 0)
+                                                 .attr("y1", yAxisScale(i))
+                                                 .attr("x2", chartWidth)
+                                                 .attr("y2", yAxisScale(i))
+                                                 .attr("stroke", "gray")
+                                                 .attr("stroke-width", 1);
                     }
                 }, (err) => {console.log(err);}
             )
             
-            let svg3 = d3.select("#p1").append("svg").attr("width",width).attr("height",height).attr("id","svg3").style("padding", "0 50px 0 50px");
+            let svg3 = d3.select("#p1").append("svg").attr("width",width)
+                                                     .attr("height",height)
+                                                     .attr("id","svg3")
+                                                     .style("padding", "0 50px 0 50px");
             let chartArea3 =  svg3.append("g");
             d3.json("./diamonds.json").then(
                 (data) => {
@@ -79,19 +120,33 @@
                     const yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.price/d.carat)]).range([height, margins.top]);
                     // Draw the circles
                     data.forEach((d,i) =>{
-                        chartArea3.append("circle").attr('cx', Math.floor(xScale(d['color_rating']) + Math.random() * 10 - 5) ).attr('cy', Math.floor(yScale(d['price']/d['carat']) + Math.random() * 10 - 5) ).attr('r',"3px").attr('fill','darkred').attr('opacity', 0.3).attr('index', i)
+                        chartArea3.append("circle").attr('cx', Math.floor(xScale(d['color_rating']) + Math.random() * 10 - 5))
+                                                   .attr('cy', Math.floor(yScale(d['price']/d['carat']) + Math.random() * 10 - 5))
+                                                   .attr('r',"3px").attr('fill','darkred')
+                                                   .attr('opacity', 0.3)
+                                                   .attr('index', i);
                     })  
                     // Draw the x grid lines
                     const xAxisScale = d3.scaleLinear().domain([0, 8]).range([0, chartWidth]);
                     for( let i = 0; i < 8; i++){
-                        chartArea3.append("line").attr("x1", xAxisScale(i)).attr("y1", margins.top ).attr("x2", xAxisScale(i)).attr("y2", height).attr("stroke", "gray").attr("stroke-width", 1);
+                        chartArea3.append("line").attr("x1", xAxisScale(i))
+                                                 .attr("y1", margins.top )
+                                                 .attr("x2", xAxisScale(i))
+                                                 .attr("y2", height)
+                                                 .attr("stroke", "gray")
+                                                 .attr("stroke-width", 1);
                     }
                     // Daw the y grid lines
                     const yMax = Math.round(d3.max(data, d => d.price/d.carat)/1000 ) * 1000;
                     //console.log(yMax)
                     const yAxisScale = d3.scaleLinear().domain([0, yMax]).range([height, margins.top]);
                     for(let i = 0; i < yMax; i+=1000){
-                        chartArea3.append("line").attr("x1", 0).attr("y1", yAxisScale(i)).attr("x2", chartWidth).attr("y2", yAxisScale(i)).attr("stroke", "gray").attr("stroke-width", 1);
+                        chartArea3.append("line").attr("x1", 0)
+                                                 .attr("y1", yAxisScale(i))
+                                                 .attr("x2", chartWidth)
+                                                 .attr("y2", yAxisScale(i))
+                                                 .attr("stroke", "gray")
+                                                 .attr("stroke-width", 1);
                     }
                 }, (err) => {console.log(err);}
             )
@@ -104,6 +159,7 @@
         <span style="font-weight:bold; font-size:20px"> Problem 2: </span><br/>
         <br/>
         <svg id="svg4" width="500" height="500"  style="background-color: black"> </svg>
+        <p> One advantage of the logarithmic scale is that it magnifies the differences between the data, highlighting the large data without overly compressing the small data. Comparing the before and after graphs, we can easily find the most noteworthy data in the logarithmic scale graph.<br/> One disadvantage of the logarithmic scale is that it reduces the significance of intermediate values after compressing the data.For example, some points that are not yellow in the second graph are yellow points in the first graph, indicating that it also represents a relatively large value, but not the largest class of data. And this information will be lost in the logarithmic scale graph. </p>
         <script> 
             d3.csv("./NCAA_shots.csv").then(
                 (data) => {
@@ -113,15 +169,20 @@
                         d.y = 5 * d.y;
                         d.width = 5 * d.width;
                         d.height = 5 * d.height;
-                        //d.attempt = Number(d.attempt);
                     })
                     //console.log(data)
                     const attemptExtent = d3.extent(data, d => d.log_attempt);
+                    //const attemptExtent = d3.extent(data, d => attempt);
                     console.log(attemptExtent)
                     const rainbowScale = d3.scaleSequential(d3.interpolateViridis).domain(attemptExtent);
                     const svg4 = d3.select("#svg4");
                     data.forEach((d,i) =>{
-                        svg4.append("rect").attr("x", d.x).attr("y", d.y).attr("width", d.width).attr("height", d.height).attr("fill", rainbowScale(d.log_attempt));
+                        svg4.append("rect").attr("x", d.x)
+                                           .attr("y", d.y)
+                                           .attr("width", d.width)
+                                           .attr("height", d.height)
+                                           //.attr("fill", rainbowScale(d.attempt));
+                                           .attr("fill", rainbowScale(d.log_attempt));
                     })
                 }, (err) => {console.log(err);}
             )
