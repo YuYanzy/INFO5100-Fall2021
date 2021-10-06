@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Yu Zhang's HW5</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://d3js.org/d3-fetch.v2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-color@3"></script>
+</head>
+
+<body>
+  <h1> INFO5100 HW5</h1>
+  <h3 style="color:blue"> Yu Zhang yz2729 </h3>
+  <HR color=#987cb9 SIZE=2>
+
+  <p id="p1">
+    <span style="font-weight:bold; font-size:20px"> Problem 1: </span><br />
+    <svg id="svg1" height="420" width="420"></svg>
+  <div>
+    <input type="range" id="slider" min="0" max="200" step="1">
+  </div>
+  <script>
+    const svg1 = d3.select("#svg1");
+    var width = svg1.attr("width");
+    var height = svg1.attr("height");
+
+    var colorArray = [];
+    // generate data
+    for (let i = 0; i < 21; i++) {
+      let a = -160 + i * 16;
+      for (let j = 0; j < 21; j++) {
+        let b = -160 + j * 16;
+        colorArray.push({ 'a': a, 'b': b });
+      }
+    }
+    //console.log(colorArray);
+    // draw circles
+    function showCircles(luminosity) {
+      const colorCircles = d3.select("#svg1");
+      // define scale
+      let aScale = d3.scaleLinear().domain([-160, 160]).range([10, 410]);
+      let bScale = d3.scaleLinear().domain([-160, 160]).range([410, 10]);
+      // join
+      svg1.selectAll("circle").data(colorArray)
+        .join(enter => {
+          enter.append("circle")
+            .attr("cx", d => aScale(d['a']))
+            .attr("cy", d => bScale(d['b']))
+            .attr("fill", d => d3.lab(l = luminosity, a = d['a'], b = d['b']))
+            .attr("r", 10)
+            .attr("stroke", "none");
+
+        },
+          update => {
+            update.attr("cx", d => aScale(d['a']))
+              .attr("cy", d => bScale(d['b']))
+              .attr("fill", d => d3.lab(l = luminosity, a = d['a'], b = d['b']));
+          },
+          exit => {
+            exit.remove()
+          }
+        );
+
+    }
+    // init the sliderValue
+    var sliderValue = 80;
+
+    showCircles(80);
+    d3.select("#slider")
+      .attr("value", sliderValue)
+      .on("change", function () {
+        sliderValue = document.getElementById("slider").value;
+        showCircles(sliderValue);
+      });
+  </script>
+
+  </p>
+  <HR color=#987cb9 SIZE=2>
+
+  <p id="p2">
+    <style>
+      .label {
+        font-family: Arial;
+        font-size: 12px;
+      }
+
+      .legend {
+        margin-top: 20px;
+        margin-left: 250px;
+      }
+
+      .legend span {
+        margin-right: 15px;
+        font-family: Arial;
+      }
+
+      .gridlines line {
+        stroke: #bbb;
+      }
+
+      .gridlines .domain {
+        stroke: none;
+      }
+    </style>
+    <span style="font-weight:bold; font-size:20px"> Problem 2: </span><br />
+    <svg id="svg2" height="500" width="800" style="margin-top:50px">
+      <text id="label" class="label" text-anchor="middle" alignment-baseline="center"></text>
+    </svg>
+  <div id="legend" class="legend"> </div>
+  <br />
+  <script>
+    const svg = d3.select("#svg2");
+
+    var width = svg.attr("width");
+    var height = svg.attr("height");
+    const margins = { top: 10, right: 10, bottom: 30, left: 30 };
+
+    const chartWidth = width - margins.left - margins.right;
+    const chartHeight = height - margins.top - margins.bottom;
+
+    let axis = svg.append("g").attr("id", "axis")
+      .attr("transform", `translate(${margins.left}, ${margins.top})`);
+    let gridlines = svg.append("g").attr("id", "gridlines")
+      .attr("transform", `translate(${margins.left}, ${margins.top})`);
+    let chartArea = svg.append("g").attr("id", "chartArea")
+      .attr("transform", `translate(${margins.left}, ${margins.top})`);
+
+    function jitter() {
+      return Math.random() * 8 - 4;
+    }
+
+    d3.json("./wines.json", d3.autoType).then(
+      (data) => {
+        // preprocess data
+        console.log(data)
+        console.log(data.length)
+        wine_states = ['New York', 'Washington', 'Oregon', 'California']
+        opacity_dict = { 'New York': 0.8, 'Washington': 0.8, 'Oregon': 0.4, 'California': 0.4 }
+        processed_data = []
+        data.forEach((d) => {
+          if (d.hasOwnProperty('state') && wine_states.includes(d.state) && d.hasOwnProperty('title')) {
+            if (d.hasOwnProperty('price') && d.hasOwnProperty('points')) {
+              d["price"] = Number(d['price'].replace(/,/g, "").replace(/\$/g, ""));
+              d["points"] = Number(d['points']);
+              if ((d['price'] > 0 && d["price"] < 300) && (d['points'] > 80 && d["points"] < 100)) {
+                processed_data.push(d);
+              }
+            }
+          }
+        });
+        data = processed_data;
+        console.log(data)
+        console.log(data.length)
+
+        const priceExtent = d3.extent(data, d => d.price);
+        const pointExtent = d3.extent(data, d => d.points);
+        //console.log(priceExtent)
+        //console.log(pointExtent)
+        const priceScale = d3.scaleLog().domain(priceExtent).range([0, chartWidth]);
+        const pointScale = d3.scaleLinear().domain(pointExtent).range([chartHeight, 0]);
+
+
+        let colorScale = d3.scaleOrdinal()
+          .domain(wine_states)
+          .range(d3.schemeCategory10);
+        // draw y aixs and x axis
+        let leftAxis = d3.axisLeft(pointScale).tickFormat(d3.format("~f"));;
+        let bottomAxis = d3.axisBottom(priceScale).tickFormat(d3.format("$"));
+        axis.append("g").attr("class", "y axis")
+          .attr("transform", `translate(${margins.left - 30},${margins.top})`)
+          .call(leftAxis);
+        axis.append("g").attr("class", "x axis")
+          .attr("transform", `translate(${margins.left - 30},${margins.top + chartHeight})`)
+          .call(bottomAxis);
+        // draw y grid lines and x grid lines
+        let leftGridLine = d3.axisLeft(pointScale).tickSize(-chartWidth).tickFormat("");
+        let bottomGridLine = d3.axisBottom(priceScale).tickSize(-chartHeight).tickFormat("");
+        gridlines.append("g").attr("class", "y gridlines")
+          .attr("transform", `translate(${margins.left - 30},${margins.top})`)
+          .call(leftGridLine);
+        gridlines.append("g").attr("class", "x gridlines")
+          .attr("transform", `translate(${margins.left - 30},${margins.top + chartHeight})`)
+          .call(bottomGridLine);
+        // draw circles
+        data.forEach((d, i) => {
+          let circle = chartArea.append("circle")
+            .attr("cx", Math.floor(priceScale(d.price) + jitter()))
+            .attr("cy", Math.floor(pointScale(d.points) + jitter()))
+            .attr("r", 4)
+            .attr("fill", colorScale(d.state))
+            .attr("index", i)
+            .attr("state", d.state)
+            .attr("opacity", opacity_dict[d.state])
+            .attr("transform", `translate(${margins.left})`);
+
+          circle.on("mouseover", function () {
+            d3.select(this).transition().duration(200)
+              .attr("r", 4 + 3)
+              .attr("stroke", "black")
+              .attr("stroke-width", 4)
+              .attr("opacity", 1);
+            d3.select("#label").text(d.title)
+              .attr("x", priceScale(d.price))
+              .attr("y", pointScale(d.points) + 30);
+          })
+
+          circle.on("mouseout", function () {
+            d3.select(this).transition().duration(200)
+              .attr("r", 4)
+              .attr("stroke-width", 0)
+              .attr("opacity", opacity_dict[d.state]);
+            d3.select("#label").text("");
+          })
+        });
+        // draw legend
+        let legend = d3.select("#legend").append("g").attr("id", "legend");
+        let legend_items = legend.selectAll("g")
+          .data(wine_states)
+          .enter()
+          .append("span")
+          .attr("opacity", 0)
+          .attr("state", d => d)
+          .text(d => d)
+          .style("color", d => colorScale(d))
+          .on("mouseover", function () {
+            let state = d3.select(this).attr("state");
+            d3.selectAll("#chartArea circle").transition().duration(200)
+              .attr("opacity", function () {
+                if (d3.select(this).attr("state") === state) {
+                  return 1;
+                } else {
+                  return 0.1;
+                }
+              });
+          })
+        let clear = legend.append("span")
+          .text("Clear")
+          .on("mouseover", function () {
+            d3.selectAll("#chartArea circle").transition().duration(200)
+              .attr("opacity", function () {
+                return opacity_dict[d3.select(this).attr("state")];
+              });
+          });
+
+
+      }, err => console.log(err));
+  </script>
+  <div> 
+    <p> A: To preprocess and filter the data, I first checked whether the data owned the keys we wantedn, including "state", "price", "point", and "title". For "state", I checked if the data contains states in the range we said in the problem description. For "price" and "point", I extracted the numeric part of them and converted it to Number type. Then, after finding very large gaps in the image, I selected a reasonable range of data and filtered out numbers that were too large or too small. A total of <strong>84</strong> sets of data were filtered, and the final number of data used was <strong>845</strong>.</p>
+    <p>B: For the x axis, I used the log sclaes. After data filtered, the data range of y-axis is about 80 to 100 and the data range of x-axis is about 10 to 200，which is relatively not very evenly. I think this interval size and the actual effect of the data distribution dose require a log scale for the x axis. To distinguish between what the x-axis and y-axis represent, I have added the $ symbol to the x-axis data.</p>
+    <p>C: I created a opacity dictionary (key: state, val: opacity). For each circle, I set the radius to 4, used the scaleOrdinal for color scale and set the opacity according to the opacity dictionary. The advantage of jitter is that it can easily reduce the overlap between the circles. But the disadvantage is that, everytime we create the picture, it is different as influenced by the jitter, which means that we can not precisely present the orginal data.</p>
+    <p>D: This has the benefit of presenting more detailed information in a limited space and brings an interactive experience that enhances the overall feeling of the user when reading this data. One problem is that when the points are too dense, it is difficult for the user to select the point he wants to select. If we can add the function to zoom in and out the local area, it should improve this problem.</p>
+    <p>E: For the legend items, I design that when mouseover event ocurr on a specific state item, the opacity of circles which owns the same state will be set to 1 and others will be set to 0.2. This makes it easy to distinguish between selected and unselected data. When the mouseover event ocurr on the clear key, all the circles will be set back to orginal opacity. This function is very useful for us to analyze the relationship between regions and price. Judging by comparing how far away from the y-axis the selected circles are when different states are selected, wines with the same points in the California region have relatively higher prices, while New York has relatively lower prices.</p>
+  </div>  
+</p>
+
+  <HR color=#987cb9 SIZE=2>
+
+</body>
+
+</html>
