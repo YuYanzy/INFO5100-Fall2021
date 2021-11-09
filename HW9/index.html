@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Yu Zhang's HW9</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://d3js.org/d3-fetch.v2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-color@3"></script>
+</head>
+
+<body>
+  <h1> INFO5100 HW9</h1>
+  <h3 style="color:blue"> Yu Zhang yz2729 </h3>
+  <HR color=#987cb9 SIZE=2>
+
+  <p id="p1">
+    <style>
+
+      .legend {
+
+        margin-top: 0px;
+        margin-left: 20px;
+      }
+
+      .legend span {
+        margin-right: 15px;
+        font-family: Arial;
+      }
+
+      .gridlines line {
+        stroke: #bbb;
+      }
+
+      .gridlines .domain {
+        stroke: none;
+      }
+    </style>
+    <span style="font-weight:bold; font-size:20px"> Problem 1: </span><br />
+    <p> I choose to use the password dataset as I believe that passwords are a matter of great relevance to everyone's life. I had my account hacked by someone before and then I started using some complicated passwords but then tended to forget them sometimes. So for this assignment, I wanted to investigate what kind of passwords are not easy to break. <span style="font-weight:bold; color:red" >Specifically, is there a relationship between the strength and type of password and the time it takes to crack it? </span></p>
+    <svg id="svg" height="600" width="800">
+      <rect id="rect" x="700" y="0" width="100" height="100" style="fill:#bbd1d3" visibility="hidden"></rect>
+      <text id="password"  text-anchor="middle" alignment-baseline="center"></text>
+      <text id="strength" text-anchor="middle" alignment-baseline="center"></text>
+      <text id="crack_time" text-anchor="middle" alignment-baseline="center"></text>
+    </svg>
+    <div id="legend" class="legend"> </div>
+    <script>
+      const svg = d3.select("#svg");
+      const width = svg.attr("width");
+      const height = svg.attr("height");
+      const margins = { top: 20, right: 10, bottom: 80, left: 60 };
+      const chartWidth = width - margins.left - margins.right;
+      const chartHeight = height - margins.top - margins.bottom;
+
+      let axis = svg.append("g").attr("id", "axis")
+      .attr("transform", `translate(${margins.left}, ${margins.top})`);
+
+      let chartArea = svg.append("g").attr("id", "chartArea")
+      .attr("transform", `translate(${margins.left - 30}, ${margins.top})`);
+
+      function jitter() {
+        return Math.random() * 8 - 4;
+      }
+
+      d3.csv("./passwords.csv", d3.autoType).then(
+        (data) => {
+
+          console.log(data);
+          const category_list = [];
+          const processed_data = [];
+          const opacity_dict = {}
+          data.forEach(d => {
+            if(d['password'] !== "NA"){
+              if(d['offline_crack_sec'] <= 0.01) {
+                d['offline_crack_sec'] = 0.01;
+              }
+              processed_data.push(d);
+              if (!category_list.includes(d.category)) {
+                category_list.push(d.category);
+              }
+            }
+          });
+
+          console.log(processed_data);
+          console.log(category_list);
+          category_list.forEach( (d,i) => {
+            if(i <= 3){
+              opacity_dict[d] = 1;
+            }
+            else if (i > 3 && i <= 6){
+              opacity_dict[d] = 0.5;
+            } else{
+              opacity_dict[d] = 0.3;
+            }
+            
+          }); 
+          console.log(opacity_dict);
+          // Extents
+          const strengthExtent = d3.extent(processed_data, d => d.strength);
+          console.log(strengthExtent)
+          const crackExtent = d3.extent(processed_data, d => d['offline_crack_sec'])
+          console.log(crackExtent)
+
+          // Scales
+          const strengthScale = d3.scaleLinear().domain(strengthExtent).range([0, chartWidth]);
+          const crackScale = d3.scaleLog().domain(crackExtent).range([chartHeight, 0]);
+          let colorScale = d3.scaleOrdinal().domain(category_list).range(d3.schemeCategory10);
+
+          // Axes
+          let yAxis = d3.axisLeft(crackScale).tickFormat(d3.format("~f"));
+          let xAxis = d3.axisBottom(strengthScale).tickFormat(d3.format("~f"));
+          axis.append("g").attr("class", "y axis")
+              .attr("transform", `translate(${margins.left - 40},${margins.top})`)
+              .call(yAxis);
+          
+          axis.append("g").attr("class", "x axis")
+              .attr("transform", `translate(${margins.left - 30},${margins.top + chartHeight + 5})`)
+              .call(xAxis);
+
+          svg.append("text")          // xAxis Label
+              .text("Strength")
+              .attr("x", margins.left + chartWidth  - 30)
+              .attr("y", chartHeight + margins.top + 55)
+              .attr("text-anchor", "middle");
+          
+          svg.append("text")          // Year label
+              .text("Crack Time")
+              .attr("x", margins.left )
+              .attr("y", margins.top )
+              .attr("text-anchor", "middle")
+        
+
+          // draw circles
+          processed_data.forEach((d, i) => {
+            let circle = chartArea.append("circle")
+              .attr("cx", Math.floor(strengthScale(d['strength']) + jitter()))
+              .attr("cy", Math.floor(crackScale(d['offline_crack_sec']) + jitter()))
+              .attr("r",  4 )
+              .attr("fill", colorScale(d['category']))
+              .attr("index", i)
+              .attr("category", d['category'])
+              .attr("opacity", opacity_dict[d['category']])
+              .attr("transform", `translate(${margins.left})`);
+  
+            circle.on("mouseover", function () {
+              d3.select(this).transition().duration(200)
+                .attr("r", 10)
+                .attr("opacity", 1);
+              d3.select("#rect").attr("visibility", "visible")
+              d3.select("#password").text(d.password)
+                .attr("x", 750)
+                .attr("y", 20)
+                .style("font-size","16px")
+                .style("font-weight","bold")
+                .style("fill","#3f5efb")
+              d3.select("#strength").text("Strenght: " + d['strength']).attr("x", 750).attr("y", 50).style("font-size","10px");
+              d3.select("#crack_time").text("Crack Time: " + d['offline_crack_sec']).attr("x", 750).attr("y", 80).style("font-size","10px");
+            })
+  
+            circle.on("mouseout", function () {
+              d3.select(this).transition().duration(200)
+                .attr("r", 4)
+                .attr("stroke-width", 0)
+                .attr("opacity", opacity_dict[d.state]);
+              d3.select("#rect").attr("visibility", "hidden")
+              d3.select("#password").text("");
+              d3.select("#strength").text("");
+              d3.select("#crack_time").text("");
+            })
+          });
+          
+
+        // Legend
+        let legend = d3.select("#legend").append("g").attr("id", "legend");
+        let legend_items = legend.selectAll("g")
+                                  .data(category_list).enter()
+                                  .append("span")
+                                  .attr("opacity", 0)
+                                  .attr("category", d => d)
+                                  .text(d => d)
+                                  .style("color", d => colorScale(d))
+                                  .on("mouseover", function () {
+                                    let category = d3.select(this).attr("category");
+                                    d3.selectAll("#chartArea circle")
+                                      .transition().duration(200)
+                                      .attr("r", 4)
+                                      .attr("opacity", function (){
+                                        if (d3.select(this).attr("category") === category) {
+                                          return 1;
+                                        } else {
+                                          return 0;
+                                        }
+                                      });
+                                  })
+                                  .on("mouseout", function(){
+                                    d3.selectAll("#chartArea circle")
+                                    .transition().duration(200)
+                                    .attr("r", 4)
+                                    .attr("opacity", function () {
+                                      return opacity_dict[d3.select(this).attr("category")];
+                                    });
+                                  })
+        }, (err) => {console.log(err)}
+      )
+
+    </script>
+
+</body>
+
+</html>
